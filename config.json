@@ -1,0 +1,9 @@
+{
+  "download_dir": "downloads",
+  "quality": "best",
+  "format": "mp4",
+  "audio_format": "mp3",
+  "ytdlp_binary": "./yt-dlp_linux",
+  "log_level": "INFO",
+  "log_file": null
+}
