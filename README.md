@@ -5,6 +5,8 @@ A simple, modular YouTube downloader CLI tool built with dependency injection fo
 ## Features
 
 - **Simple CLI Interface**: Download videos with a single command
+- **Interactive Mode**: Download multiple videos without retyping commands
+- **Live Progress**: Real-time download progress with speed and ETA
 - **Quality Selection**: Choose from various quality options (720p, 1080p, best, worst)
 - **Audio-Only Downloads**: Extract audio tracks
 - **Video Information**: Preview video details before downloading
@@ -53,6 +55,27 @@ chmod +x ytdl.py
 
 # Show video information without downloading
 ./ytdl.py --info "https://youtube.com/watch?v=VIDEO_ID"
+
+# Interactive mode for multiple downloads
+./ytdl.py -i
+# Or with preset quality/output
+./ytdl.py -i -q 720p -o ~/Videos
+```
+
+## Interactive Mode
+
+For downloading multiple videos easily:
+
+```bash
+$ ./ytdl.py -i
+Interactive mode - Enter URLs to download (type 'quit' to exit)
+Current settings - Quality: best, Output: downloads
+ytdl> https://youtube.com/watch?v=abc123
+[download progress displays]
+ytdl> https://youtube.com/watch?v=def456
+[download progress displays]
+ytdl> quit
+Goodbye!
 ```
 
 ## Configuration

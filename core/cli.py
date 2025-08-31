@@ -19,7 +19,8 @@ class CLIService:
         
         parser.add_argument(
             "url",
-            help="URL to download"
+            nargs="?",
+            help="URL to download (optional in interactive mode)"
         )
         
         parser.add_argument(
@@ -45,6 +46,12 @@ class CLIService:
             help="Show video information without downloading"
         )
         
+        parser.add_argument(
+            "-i", "--interactive",
+            action="store_true",
+            help="Interactive mode for downloading multiple URLs"
+        )
+        
         return parser
     
     def parse_args(self, args: Optional[List[str]] = None) -> argparse.Namespace:
@@ -53,6 +60,13 @@ class CLIService:
     def run(self, args: Optional[List[str]] = None) -> int:
         try:
             parsed_args = self.parse_args(args)
+            
+            if parsed_args.interactive:
+                return self._interactive_mode(parsed_args)
+            
+            if not parsed_args.url:
+                self.output_handler.error("URL required when not in interactive mode")
+                return 1
             
             if parsed_args.info:
                 return self._show_info(parsed_args.url)
@@ -88,3 +102,37 @@ class CLIService:
         else:
             self.output_handler.error("Could not fetch video information")
             return 1
+    
+    def _interactive_mode(self, args: argparse.Namespace) -> int:
+        self.output_handler.info("Interactive mode - Enter URLs to download (type 'quit' to exit)")
+        self.output_handler.info(f"Current settings - Quality: {args.quality or self.config.quality}, Output: {args.output or self.config.download_dir}")
+        
+        while True:
+            try:
+                url = input("ytdl> ").strip()
+                
+                if url.lower() in ['quit', 'exit', 'q']:
+                    self.output_handler.info("Goodbye!")
+                    return 0
+                
+                if not url:
+                    continue
+                
+                if url.startswith('http'):
+                    quality = self._determine_quality(args)
+                    success = self.downloader.download(
+                        url=url,
+                        output_dir=args.output,
+                        quality=quality
+                    )
+                    if not success:
+                        self.output_handler.error("Download failed, continuing...")
+                else:
+                    self.output_handler.error("Please enter a valid URL starting with http")
+                    
+            except KeyboardInterrupt:
+                self.output_handler.info("\nExiting interactive mode")
+                return 0
+            except EOFError:
+                self.output_handler.info("\nExiting interactive mode")
+                return 0

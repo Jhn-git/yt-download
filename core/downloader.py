@@ -27,18 +27,28 @@ class DownloaderService:
             cmd = self._build_command(url, output_dir, quality)
             self.output_handler.info(f"Downloading: {url}")
             
-            result = subprocess.run(
+            process = subprocess.Popen(
                 cmd,
-                capture_output=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
                 text=True,
+                bufsize=1,
+                universal_newlines=True,
                 cwd=os.getcwd()
             )
             
-            if result.returncode == 0:
+            # Stream output in real-time
+            for line in process.stdout:
+                print(line.rstrip())
+            
+            # Wait for process to complete and get return code
+            return_code = process.wait()
+            
+            if return_code == 0:
                 self.output_handler.info("Download completed successfully")
                 return True
             else:
-                self.output_handler.error(f"Download failed: {result.stderr}")
+                self.output_handler.error("Download failed")
                 return False
                 
         except Exception as e:

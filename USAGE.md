@@ -5,14 +5,15 @@ This guide provides comprehensive examples and advanced usage patterns for the Y
 ## Table of Contents
 
 1. [Basic Downloads](#basic-downloads)
-2. [Quality Options](#quality-options)
-3. [Output Management](#output-management)
-4. [Audio Downloads](#audio-downloads)
-5. [Video Information](#video-information)
-6. [Configuration](#configuration)
-7. [Logging](#logging)
-8. [Advanced Examples](#advanced-examples)
-9. [Troubleshooting](#troubleshooting)
+2. [Interactive Mode](#interactive-mode)
+3. [Quality Options](#quality-options)
+4. [Output Management](#output-management)
+5. [Audio Downloads](#audio-downloads)
+6. [Video Information](#video-information)
+7. [Configuration](#configuration)
+8. [Logging](#logging)
+9. [Advanced Examples](#advanced-examples)
+10. [Troubleshooting](#troubleshooting)
 
 ## Basic Downloads
 
@@ -27,6 +28,58 @@ This downloads the video to the default `downloads/` directory with the best ava
 ### Download with Custom Title
 
 The tool automatically uses the video title as the filename. Special characters are handled safely.
+
+## Interactive Mode
+
+Interactive mode allows you to download multiple videos without retyping commands or quality settings.
+
+### Starting Interactive Mode
+
+```bash
+# Basic interactive mode
+./ytdl.py -i
+
+# Interactive mode with preset quality and output directory
+./ytdl.py -i -q 720p -o ~/Videos
+
+# Interactive mode with audio-only preset
+./ytdl.py -i --audio-only -o ~/Music
+```
+
+### Using Interactive Mode
+
+Once in interactive mode, simply paste URLs and press Enter:
+
+```bash
+$ ./ytdl.py -i -q 720p -o ~/Videos
+Interactive mode - Enter URLs to download (type 'quit' to exit)
+Current settings - Quality: 720p, Output: ~/Videos
+ytdl> https://youtube.com/watch?v=dQw4w9WgXcQ
+INFO: Downloading: https://youtube.com/watch?v=dQw4w9WgXcQ
+[download] 0.0% of 3.28MiB at 1.50MiB/s ETA 00:02
+[download] 45.2% of 3.28MiB at 2.1MiB/s ETA 00:01
+[download] 100% of 3.28MiB at 2.3MiB/s
+INFO: Download completed successfully
+ytdl> https://youtube.com/watch?v=another_video
+[download progress shows...]
+ytdl> quit
+Goodbye!
+```
+
+### Interactive Mode Features
+
+- **Persistent Settings**: Quality, output directory, and audio-only settings persist for all downloads
+- **Live Progress**: Real-time download progress with percentage, speed, and ETA
+- **Error Recovery**: If one download fails, you can continue with other URLs
+- **Easy Exit**: Type `quit`, `exit`, `q`, or press Ctrl+C to exit
+- **URL Validation**: Basic validation ensures you enter valid HTTP URLs
+
+### Interactive Mode Tips
+
+- Copy multiple URLs to your clipboard and paste them one by one
+- Use specific quality settings when starting interactive mode to avoid typing them repeatedly
+- Interactive mode is perfect for downloading video series or playlists manually
+- All downloads use the same settings you specify when launching interactive mode
 
 ## Quality Options
 
@@ -170,9 +223,16 @@ Enable file logging by setting `log_file` in `config.json`:
 
 ## Advanced Examples
 
-### Batch Processing Script
+### Multiple Download Methods
 
-Create a shell script for multiple downloads:
+#### Interactive Mode (Recommended)
+```bash
+./ytdl.py -i -q 720p -o ~/Videos
+# Then paste URLs one by one
+```
+
+#### Batch Processing Script
+Create a shell script for automated downloads:
 
 ```bash
 #!/bin/bash
