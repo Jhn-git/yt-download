@@ -1,22 +1,48 @@
 #!/usr/bin/env python3
-import sys
-from core.config import ConfigService
-from core.downloader import DownloaderService
-from core.cli import CLIService
-from core.logger import LoggerService
+"""
+Backward-compatible wrapper for ytdl CLI.
 
+This script provides compatibility with the old file structure while
+using the new package-based approach.
+"""
+import sys
 
 def main():
-    config = ConfigService()
-    logger = LoggerService(
-        level=config.get("log_level", "INFO"),
-        log_file=config.get("log_file")
-    )
-    downloader = DownloaderService(config, logger)
-    cli = CLIService(config, downloader, logger)
+    """Run the ytdl CLI using the installed package or local development mode."""
+    import os
     
-    return cli.run()
-
+    # Remove current directory from path to avoid importing this wrapper script
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    original_path = sys.path[:]
+    
+    # Try importing from installed package first
+    try:
+        # Temporarily remove current directory to avoid wrapper script conflicts
+        if current_dir in sys.path:
+            sys.path.remove(current_dir)
+        if '' in sys.path:
+            sys.path.remove('')
+            
+        from ytdl.main import main as ytdl_main
+        return ytdl_main()
+    except ImportError:
+        pass
+    finally:
+        # Restore original path
+        sys.path[:] = original_path
+    
+    # Fallback to local development mode
+    try:
+        src_path = os.path.join(current_dir, 'src')
+        if src_path not in sys.path:
+            sys.path.insert(0, src_path)
+        from ytdl.main import main as ytdl_main
+        return ytdl_main()
+    except ImportError:
+        print("ERROR: Could not import ytdl package.")
+        print("Please run: pip install -e .")
+        print("Or ensure the src/ytdl directory exists.")
+        return 1
 
 if __name__ == "__main__":
     sys.exit(main())

@@ -1,2 +1,5 @@
-# No external dependencies required for basic functionality
-# Future dependencies can be added here as needed
+# Core dependencies for enhanced functionality
+Pillow>=10.0.0  # For thumbnail image handling
+
+# Development dependencies
+# pyinstaller>=6.0.0  # For creating executables

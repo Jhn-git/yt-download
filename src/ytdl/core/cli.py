@@ -1,0 +1,150 @@
+import argparse
+from typing import List, Optional
+from .config import ConfigService
+from .downloader import DownloaderService, OutputHandler
+
+
+class CLIService:
+    """Command-line interface service for the downloader.
+    
+    Handles argument parsing, interactive mode, and user input processing.
+    Coordinates between user input and downloader service.
+    """
+    def __init__(self, config: ConfigService, downloader: DownloaderService, output_handler: OutputHandler):
+        """Initialize CLI service.
+        
+        Args:
+            config: Configuration service instance
+            downloader: Downloader service instance
+            output_handler: Output handler for messages
+        """
+        self.config = config
+        self.downloader = downloader
+        self.output_handler = output_handler
+        self.parser = self._create_parser()
+    
+    def _create_parser(self) -> argparse.ArgumentParser:
+        parser = argparse.ArgumentParser(
+            description="Simple YouTube downloader with dependency injection",
+            formatter_class=argparse.RawDescriptionHelpFormatter
+        )
+        
+        parser.add_argument(
+            "url",
+            nargs="?",
+            help="URL to download (optional in interactive mode)"
+        )
+        
+        parser.add_argument(
+            "-o", "--output",
+            help=f"Output directory (default: {self.config.download_dir})"
+        )
+        
+        parser.add_argument(
+            "-q", "--quality",
+            help=f"Video quality (default: {self.config.quality})",
+            choices=["best", "worst", "720p", "1080p", "480p"]
+        )
+        
+        parser.add_argument(
+            "--audio-only",
+            action="store_true",
+            help="Download audio only"
+        )
+        
+        parser.add_argument(
+            "--info",
+            action="store_true",
+            help="Show video information without downloading"
+        )
+        
+        parser.add_argument(
+            "-i", "--interactive",
+            action="store_true",
+            help="Interactive mode for downloading multiple URLs"
+        )
+        
+        return parser
+    
+    def parse_args(self, args: Optional[List[str]] = None) -> argparse.Namespace:
+        return self.parser.parse_args(args)
+    
+    def run(self, args: Optional[List[str]] = None) -> int:
+        try:
+            parsed_args = self.parse_args(args)
+            
+            if parsed_args.interactive:
+                return self._interactive_mode(parsed_args)
+            
+            if not parsed_args.url:
+                self.output_handler.error("URL required when not in interactive mode")
+                return 1
+            
+            if parsed_args.info:
+                return self._show_info(parsed_args.url)
+            
+            quality = self._determine_quality(parsed_args)
+            success = self.downloader.download(
+                url=parsed_args.url,
+                output_dir=parsed_args.output,
+                quality=quality
+            )
+            
+            return 0 if success else 1
+            
+        except KeyboardInterrupt:
+            self.output_handler.info("Download cancelled by user")
+            return 130
+        except Exception as e:
+            self.output_handler.error(f"Unexpected error: {str(e)}")
+            return 1
+    
+    def _determine_quality(self, args: argparse.Namespace) -> str:
+        if args.audio_only:
+            return "bestaudio/best"
+        return args.quality or self.config.quality
+    
+    def _show_info(self, url: str) -> int:
+        info = self.downloader.get_info(url)
+        if info:
+            self.output_handler.info(f"Title: {info.get('title', 'Unknown')}")
+            self.output_handler.info(f"Duration: {info.get('duration', 'Unknown')} seconds")
+            self.output_handler.info(f"Uploader: {info.get('uploader', 'Unknown')}")
+            return 0
+        else:
+            self.output_handler.error("Could not fetch video information")
+            return 1
+    
+    def _interactive_mode(self, args: argparse.Namespace) -> int:
+        self.output_handler.info("Interactive mode - Enter URLs to download (type 'quit' to exit)")
+        self.output_handler.info(f"Current settings - Quality: {args.quality or self.config.quality}, Output: {args.output or self.config.download_dir}")
+        
+        while True:
+            try:
+                url = input("ytdl> ").strip()
+                
+                if url.lower() in ['quit', 'exit', 'q']:
+                    self.output_handler.info("Goodbye!")
+                    return 0
+                
+                if not url:
+                    continue
+                
+                if url.startswith('http'):
+                    quality = self._determine_quality(args)
+                    success = self.downloader.download(
+                        url=url,
+                        output_dir=args.output,
+                        quality=quality
+                    )
+                    if not success:
+                        self.output_handler.error("Download failed, continuing...")
+                else:
+                    self.output_handler.error("Please enter a valid URL starting with http")
+                    
+            except KeyboardInterrupt:
+                self.output_handler.info("\nExiting interactive mode")
+                return 0
+            except EOFError:
+                self.output_handler.info("\nExiting interactive mode")
+                return 0
