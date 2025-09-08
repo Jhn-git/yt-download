@@ -1,0 +1,9 @@
+{
+  "download_dir": "/tmp/test_downloads",
+  "quality": "720p",
+  "format": "mp4",
+  "audio_format": "mp3",
+  "ytdlp_binary": "./test_yt-dlp",
+  "log_level": "DEBUG",
+  "log_file": "/tmp/test.log"
+}
