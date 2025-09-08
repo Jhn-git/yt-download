@@ -21,7 +21,7 @@ from .components.control_buttons import ControlButtonsComponent
 from .dialogs.settings_dialog import SettingsDialog
 from .dialogs.video_info_dialog import VideoInfoDialog
 from .models.download_item import DownloadItem
-from .utils.gui_utils import format_file_size, is_valid_url
+from .utils.gui_utils import format_file_size, is_valid_url, open_folder
 
 try:
     from PIL import Image, ImageTk
@@ -78,7 +78,8 @@ class GUIService:
         self.options_panel = OptionsPanelComponent(
             self.main_frame,
             default_quality=self.config.quality,
-            default_output=self.config.download_dir
+            default_output=self.config.download_dir,
+            open_folder_callback=self._handle_folder_open_result
         )
         
         # Download queue component
@@ -276,6 +277,18 @@ class GUIService:
         """Remove selected item from queue"""
         if self.download_queue.remove_selected_item():
             self._update_button_states()
+    
+    def _handle_folder_open_result(self, folder_path: Optional[str]):
+        """Handle the result of opening a folder"""
+        if folder_path:
+            self.progress_display.set_status(f"Opened folder: {folder_path}")
+        else:
+            # Get the current download directory to show in error
+            download_dir = self.options_panel.get_output_dir() or self.config.download_dir
+            self.progress_display.set_status(f"Could not open folder: {download_dir}")
+            # Show error message to user
+            from tkinter import messagebox
+            messagebox.showerror("Error", f"Could not open folder:\n{download_dir}\n\nPlease check that the folder exists.")
     
     def _show_settings(self):
         """Show settings dialog"""

@@ -2,13 +2,17 @@
 
 import tkinter as tk
 from tkinter import ttk, filedialog
+from typing import Optional, Callable
+from ..utils.gui_utils import open_folder
 
 
 class OptionsPanelComponent:
     """Component for quality and output directory selection"""
     
-    def __init__(self, parent: tk.Widget, default_quality: str = "best", default_output: str = ""):
+    def __init__(self, parent: tk.Widget, default_quality: str = "best", default_output: str = "", 
+                 open_folder_callback: Optional[Callable[[str], None]] = None):
         self.parent = parent
+        self.open_folder_callback = open_folder_callback
         
         self.frame = None
         self.quality_var = None
@@ -35,7 +39,8 @@ class OptionsPanelComponent:
         self.output_var = tk.StringVar(value=default_output)
         self.output_entry = ttk.Entry(self.frame, textvariable=self.output_var, width=30)
         self.output_entry.grid(row=0, column=3, sticky=(tk.W, tk.E), padx=(0, 5))
-        ttk.Button(self.frame, text="Browse", command=self._browse_output_dir).grid(row=0, column=4)
+        ttk.Button(self.frame, text="Browse", command=self._browse_output_dir).grid(row=0, column=4, padx=(0, 5))
+        ttk.Button(self.frame, text="Open Folder", command=self._open_folder).grid(row=0, column=5)
     
     def grid(self, **kwargs):
         """Grid the frame component"""
@@ -70,3 +75,13 @@ class OptionsPanelComponent:
         directory = filedialog.askdirectory(initialdir=current_dir)
         if directory:
             self.set_output_dir(directory)
+    
+    def _open_folder(self):
+        """Open the current output directory"""
+        current_dir = self.get_output_dir()
+        if not current_dir:
+            return
+        
+        success = open_folder(current_dir)
+        if self.open_folder_callback:
+            self.open_folder_callback(current_dir if success else None)
