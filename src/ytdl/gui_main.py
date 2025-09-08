@@ -11,7 +11,7 @@ from tkinter import messagebox
 from ytdl.core.config import ConfigService
 from ytdl.core.downloader import DownloaderService
 from ytdl.core.logger import LoggerService
-from ytdl.core.gui import GUIService
+from ytdl.gui import GUIService
 
 
 def show_error_dialog(title: str, message: str):
