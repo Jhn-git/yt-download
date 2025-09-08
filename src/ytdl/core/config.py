@@ -12,11 +12,11 @@ class ConfigService:
     and PyInstaller bundle support. Handles platform-specific binary paths.
     """
     
-    def __init__(self, config_file: str = "config.json"):
+    def __init__(self, config_file: str = "config/config.json"):
         """Initialize configuration service.
         
         Args:
-            config_file: Path to configuration file (default: "config.json")
+            config_file: Path to configuration file (default: "config/config.json")
         """
         self.config_file = config_file
         self._config = self._load_config()

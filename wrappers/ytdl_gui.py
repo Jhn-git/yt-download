@@ -33,7 +33,9 @@ def main():
     
     # Fallback to local development mode
     try:
-        src_path = os.path.join(current_dir, 'src')
+        # Go up one level from wrappers/ to project root, then to src/
+        project_root = os.path.dirname(current_dir)
+        src_path = os.path.join(project_root, 'src')
         if src_path not in sys.path:
             sys.path.insert(0, src_path)
         from ytdl.gui_main import main as gui_main

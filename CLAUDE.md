@@ -32,20 +32,32 @@ All services use constructor injection. OutputHandler protocol enables mocking f
 
 **GUI Application** (Recommended):
 ```bash
-# Launch graphical interface (development)
+# Convenience script (easiest)
+python run_gui.py
+
+# Or directly from source
 python src/ytdl/gui_main.py
 
 # Or using setup.py entry points (after pip install -e .)
 ytdl-gui
+
+# Or using backward-compatible wrapper
+python wrappers/ytdl_gui.py
 ```
 
 **Command Line**:
 ```bash
-# Basic download (development)
+# Convenience script (easiest)
+python run_cli.py "https://youtube.com/watch?v=VIDEO_ID"
+
+# Or directly from source
 python src/ytdl/main.py "https://youtube.com/watch?v=VIDEO_ID"
 
 # Or using setup.py entry points (after pip install -e .)
 ytdl "https://youtube.com/watch?v=VIDEO_ID"
+
+# Or using backward-compatible wrapper
+python wrappers/ytdl.py "https://youtube.com/watch?v=VIDEO_ID"
 
 # With quality and output directory
 ytdl -q 720p -o ~/Videos "URL"
@@ -79,11 +91,15 @@ ytdl --help
 ytdl-gui  # Launch GUI for testing
 ytdl --info "https://youtube.com/watch?v=dQw4w9WgXcQ"
 
-# Option 2: Use backward-compatible wrapper scripts
-python ytdl.py --help
-python ytdl_gui.py
+# Option 2: Use root-level convenience scripts (development)
+python run_cli.py --help
+python run_gui.py
 
-# Option 3: Run directly from source
+# Option 3: Use backward-compatible wrapper scripts
+python wrappers/ytdl.py --help
+python wrappers/ytdl_gui.py
+
+# Option 4: Run directly from source
 python src/ytdl/main.py --help
 python src/ytdl/gui_main.py
 ```
@@ -167,8 +183,8 @@ service = DownloaderService(mock_config, mock_output)
 ```
 
 ## Configuration
-- **File**: `config.json` (JSON format)
-- **Local overrides**: `config_local.json` (gitignored)
+- **File**: `config/config.json` (JSON format)
+- **Local overrides**: `config/config_local.json` (gitignored)
 - **Key settings**: download_dir, quality, ytdlp_binary path, log_level
 
 ## Important Files
@@ -182,19 +198,28 @@ service = DownloaderService(mock_config, mock_output)
 - `setup.py`: Package configuration with console script entry points
 
 ### Configuration & Build
-- `config.json`: Default configuration
-- `YT-Download-GUI.spec`: PyInstaller specification (cross-platform)
+- `config/config.json`: Default configuration
+- `config/YT-Download-GUI.spec`: PyInstaller specification (cross-platform)
 - `scripts/build_exe.py`: Cross-platform executable build script
 - `scripts/build_exe.bat`: Windows batch build script
-- `BUILD_WINDOWS.md`: Detailed Windows build instructions
+- `scripts/debug_windows.py`: Windows debugging script
+
+### Documentation
+- `docs/BUILD_WINDOWS.md`: Detailed Windows build instructions
+- `docs/CONTRIBUTING.md`: Contribution guidelines
+- `docs/FEATURES.md`: Feature documentation
+- `docs/USAGE.md`: Usage instructions
+
+### Convenience Scripts & Wrappers
+- `run_cli.py`: Root-level CLI launcher
+- `run_gui.py`: Root-level GUI launcher
+- `wrappers/ytdl.py`: Backward-compatible CLI wrapper
+- `wrappers/ytdl_gui.py`: Backward-compatible GUI wrapper
 
 ### Testing & Tools
 - `tools/run_tests.py`: Test runner with multiple execution options
 - `tests/`: Comprehensive test suite (unit + integration tests)
 - `binaries/`: External binaries (yt-dlp_linux, yt-dlp.exe)
-
-### Configuration
-- `.gitignore`: Excludes downloads/, *.part, config_local.json, build/, dist/
 
 ## Troubleshooting
 

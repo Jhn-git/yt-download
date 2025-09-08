@@ -80,7 +80,7 @@ def build_executable(platform_info):
     try:
         result = subprocess.run([
             sys.executable, '-m', 'PyInstaller', 
-            'YT-Download-GUI.spec',
+            'config/YT-Download-GUI.spec',
             '--clean'
         ], check=True, capture_output=True, text=True)
         
@@ -133,17 +133,18 @@ def main():
         return 1
     
     # Check required files (platform-specific)
-    required_files = ['ytdl_gui.py', 'YT-Download-GUI.spec', 'config.json']
+    required_files = ['wrappers/ytdl_gui.py', 'config/YT-Download-GUI.spec', 'config/config.json']
     
     # Add platform-specific binary
-    if os.path.exists(platform_info["binary_name"]):
-        required_files.append(platform_info["binary_name"])
-    elif os.path.exists("yt-dlp_linux"):
-        required_files.append("yt-dlp_linux")  # Fallback
-        print(f"⚠️  Using yt-dlp_linux instead of {platform_info['binary_name']}")
+    binary_path = f"binaries/{platform_info['binary_name']}"
+    if os.path.exists(binary_path):
+        required_files.append(binary_path)
+    elif os.path.exists("binaries/yt-dlp_linux"):
+        required_files.append("binaries/yt-dlp_linux")  # Fallback
+        print(f"⚠️  Using binaries/yt-dlp_linux instead of {binary_path}")
     else:
         print(f"ERROR: No yt-dlp binary found!")
-        print(f"Expected: {platform_info['binary_name']} or yt-dlp_linux")
+        print(f"Expected: {binary_path} or binaries/yt-dlp_linux")
         return 1
     
     missing_files = [f for f in required_files if not os.path.exists(f)]
