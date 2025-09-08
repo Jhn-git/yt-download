@@ -29,6 +29,7 @@ MANIFEST
 # PyInstaller
 *.manifest
 *.spec
+!YT-Download-GUI.spec  # Keep our custom spec file
 
 # Installer logs
 pip-log.txt
@@ -148,6 +149,18 @@ config_local.json
 personal_*
 local_*
 dev_*
+
+# Development and debugging files
+debug_*
+test_output/
+*.debug
+*.trace
+temp/
+temporary/
+
+# Build and distribution artifacts
+*.pyc
+*.pyo
 
 # yt-dlp specific
 *.part

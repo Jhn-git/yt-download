@@ -20,91 +20,72 @@ A simple, modular YouTube downloader CLI tool built with dependency injection fo
 ### Prerequisites
 
 - **Python 3.8+**
-- **yt-dlp binary** (included as `yt-dlp_linux`)
+- **yt-dlp binary** (included for Linux and Windows - see Platform Notes below)
 - **ffmpeg** (for video processing)
 
 ### Installation
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/Jhn-git/yt-download.git
 cd yt-download
 ```
 
-2. Make the script executable:
+2. Install the package in development mode:
+
+**Windows (PowerShell - Recommended):**
+```powershell
+.\setup.ps1
+```
+
+**Manual Installation:**
 ```bash
-chmod +x ytdl.py
+pip install -e .
 ```
 
 3. Download a video:
 ```bash
-./ytdl.py "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+ytdl "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 ```
 
-## Basic Usage
+## Usage
+
+For comprehensive usage examples and advanced features, see [USAGE.md](USAGE.md).
+
+### Quick Examples
 
 ```bash
-# Download with default settings
-./ytdl.py "https://youtube.com/watch?v=VIDEO_ID"
-
-# Specify quality and output directory
-./ytdl.py -q 720p -o ~/Videos "https://youtube.com/watch?v=VIDEO_ID"
-
-# Download audio only
-./ytdl.py --audio-only "https://youtube.com/watch?v=VIDEO_ID"
-
-# Show video information without downloading
-./ytdl.py --info "https://youtube.com/watch?v=VIDEO_ID"
+# Download a video
+ytdl "https://youtube.com/watch?v=VIDEO_ID"
 
 # Interactive mode for multiple downloads
-./ytdl.py -i
-# Or with preset quality/output
-./ytdl.py -i -q 720p -o ~/Videos
-```
+ytdl -i
 
-## Interactive Mode
-
-For downloading multiple videos easily:
-
-```bash
-$ ./ytdl.py -i
-Interactive mode - Enter URLs to download (type 'quit' to exit)
-Current settings - Quality: best, Output: downloads
-ytdl> https://youtube.com/watch?v=abc123
-[download progress displays]
-ytdl> https://youtube.com/watch?v=def456
-[download progress displays]
-ytdl> quit
-Goodbye!
+# Launch GUI interface
+ytdl-gui
 ```
 
 ## Configuration
 
-The `config.json` file allows you to customize default behavior:
-
-```json
-{
-  "download_dir": "downloads",
-  "quality": "best",
-  "format": "mp4",
-  "audio_format": "mp3",
-  "ytdlp_binary": "./yt-dlp_linux",
-  "log_level": "INFO",
-  "log_file": null
-}
-```
+Customize defaults in `config.json`. See [USAGE.md](USAGE.md) for complete configuration options.
 
 ## Project Structure
 
 ```
-ytdl.py              # Main CLI entry point
-core/
-  ├── config.py      # Configuration management
-  ├── downloader.py  # Video download service
-  ├── cli.py         # Command-line interface
-  └── logger.py      # Logging service
+src/ytdl/
+  ├── main.py        # CLI entry point
+  ├── gui_main.py    # GUI entry point
+  └── core/
+    ├── config.py    # Configuration management
+    ├── downloader.py # Video download service
+    ├── cli.py       # Command-line interface
+    ├── gui.py       # GUI service
+    └── logger.py    # Logging service
+setup.py             # Package installation configuration
 downloads/           # Default download directory
 config.json          # Configuration file
+ytdl.py              # Backward compatibility wrapper
+ytdl_gui.py          # Backward compatibility wrapper
 ```
 
 ## Architecture
@@ -114,6 +95,7 @@ This project uses dependency injection to maintain clean separation of concerns:
 - **ConfigService**: Manages application configuration
 - **DownloaderService**: Handles yt-dlp integration and downloads
 - **CLIService**: Manages command-line interface and argument parsing
+- **GUIService**: Provides tkinter-based graphical interface
 - **LoggerService**: Provides structured logging
 
 This design makes the codebase highly testable and extensible.
@@ -123,6 +105,29 @@ This design makes the codebase highly testable and extensible.
 For detailed development instructions, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 For comprehensive usage examples, see [USAGE.md](USAGE.md).
+
+## Platform Notes
+
+### Binary Configuration
+
+The project includes yt-dlp binaries for both platforms:
+- **Linux/WSL**: Uses `./binaries/yt-dlp_linux` (default)
+- **Windows**: Uses `./binaries/yt-dlp.exe`
+
+The configuration automatically detects your platform, but you can override the binary path in `config.json`:
+
+```json
+{
+  "ytdlp_binary": "./binaries/yt-dlp_linux"  // or "./binaries/yt-dlp.exe"
+}
+```
+
+### Cross-Platform Compatibility
+
+- **Development**: Works on Linux, macOS, and Windows
+- **Executables**: Must be built on target platform
+  - **Windows**: Use `.\build.ps1` for automated builds
+  - **Detailed instructions**: See BUILD_WINDOWS.md
 
 ## Requirements
 

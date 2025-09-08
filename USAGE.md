@@ -2,6 +2,9 @@
 
 This guide provides comprehensive examples and advanced usage patterns for the YT-Download CLI tool.
 
+📋 **Quick Start**: For installation instructions, see [README.md](README.md)  
+📋 **Development**: For contributing guidelines, see [CONTRIBUTING.md](CONTRIBUTING.md)
+
 ## Table of Contents
 
 1. [Basic Downloads](#basic-downloads)
@@ -20,7 +23,7 @@ This guide provides comprehensive examples and advanced usage patterns for the Y
 ### Download a Single Video
 
 ```bash
-./ytdl.py "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+ytdl "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 ```
 
 This downloads the video to the default `downloads/` directory with the best available quality.
@@ -37,13 +40,13 @@ Interactive mode allows you to download multiple videos without retyping command
 
 ```bash
 # Basic interactive mode
-./ytdl.py -i
+ytdl -i
 
 # Interactive mode with preset quality and output directory
-./ytdl.py -i -q 720p -o ~/Videos
+ytdl -i -q 720p -o ~/Videos
 
 # Interactive mode with audio-only preset
-./ytdl.py -i --audio-only -o ~/Music
+ytdl -i --audio-only -o ~/Music
 ```
 
 ### Using Interactive Mode
@@ -51,7 +54,7 @@ Interactive mode allows you to download multiple videos without retyping command
 Once in interactive mode, simply paste URLs and press Enter:
 
 ```bash
-$ ./ytdl.py -i -q 720p -o ~/Videos
+$ ytdl -i -q 720p -o ~/Videos
 Interactive mode - Enter URLs to download (type 'quit' to exit)
 Current settings - Quality: 720p, Output: ~/Videos
 ytdl> https://youtube.com/watch?v=dQw4w9WgXcQ
@@ -95,13 +98,13 @@ Goodbye!
 
 ```bash
 # Download in 720p
-./ytdl.py -q 720p "https://youtube.com/watch?v=VIDEO_ID"
+ytdl -q 720p "https://youtube.com/watch?v=VIDEO_ID"
 
 # Download lowest quality (for slow connections)
-./ytdl.py -q worst "https://youtube.com/watch?v=VIDEO_ID"
+ytdl -q worst "https://youtube.com/watch?v=VIDEO_ID"
 
 # Download highest quality (explicit)
-./ytdl.py -q best "https://youtube.com/watch?v=VIDEO_ID"
+ytdl -q best "https://youtube.com/watch?v=VIDEO_ID"
 ```
 
 ## Output Management
@@ -110,19 +113,19 @@ Goodbye!
 
 ```bash
 # Download to specific folder
-./ytdl.py -o ~/Videos "https://youtube.com/watch?v=VIDEO_ID"
+ytdl -o ~/Videos "https://youtube.com/watch?v=VIDEO_ID"
 
 # Download to current directory
-./ytdl.py -o . "https://youtube.com/watch?v=VIDEO_ID"
+ytdl -o . "https://youtube.com/watch?v=VIDEO_ID"
 
 # Create nested directories
-./ytdl.py -o ~/Downloads/YouTube/Music "https://youtube.com/watch?v=VIDEO_ID"
+ytdl -o ~/Downloads/YouTube/Music "https://youtube.com/watch?v=VIDEO_ID"
 ```
 
 ### Combine Quality and Output
 
 ```bash
-./ytdl.py -q 1080p -o ~/Videos "https://youtube.com/watch?v=VIDEO_ID"
+ytdl -q 1080p -o ~/Videos "https://youtube.com/watch?v=VIDEO_ID"
 ```
 
 ## Audio Downloads
@@ -131,10 +134,10 @@ Goodbye!
 
 ```bash
 # Download audio only (best quality)
-./ytdl.py --audio-only "https://youtube.com/watch?v=VIDEO_ID"
+ytdl --audio-only "https://youtube.com/watch?v=VIDEO_ID"
 
 # Combine with custom output
-./ytdl.py --audio-only -o ~/Music "https://youtube.com/watch?v=VIDEO_ID"
+ytdl --audio-only -o ~/Music "https://youtube.com/watch?v=VIDEO_ID"
 ```
 
 Audio files are automatically converted to MP3 format using ffmpeg.
@@ -144,7 +147,7 @@ Audio files are automatically converted to MP3 format using ffmpeg.
 ### Preview Before Download
 
 ```bash
-./ytdl.py --info "https://youtube.com/watch?v=VIDEO_ID"
+ytdl --info "https://youtube.com/watch?v=VIDEO_ID"
 ```
 
 This shows:
@@ -227,7 +230,7 @@ Enable file logging by setting `log_file` in `config.json`:
 
 #### Interactive Mode (Recommended)
 ```bash
-./ytdl.py -i -q 720p -o ~/Videos
+ytdl -i -q 720p -o ~/Videos
 # Then paste URLs one by one
 ```
 
@@ -245,7 +248,7 @@ urls=(
 )
 
 for url in "${urls[@]}"; do
-  ./ytdl.py -q 720p -o ~/Videos "$url"
+  ytdl -q 720p -o ~/Videos "$url"
   sleep 2  # Be nice to the server
 done
 ```
@@ -260,10 +263,10 @@ The tool works with any platform supported by yt-dlp:
 
 ```bash
 # YouTube
-./ytdl.py "https://youtube.com/watch?v=VIDEO_ID"
+ytdl "https://youtube.com/watch?v=VIDEO_ID"
 
 # Vimeo
-./ytdl.py "https://vimeo.com/123456789"
+ytdl "https://vimeo.com/123456789"
 
 # Many other platforms supported by yt-dlp
 ```
@@ -328,7 +331,7 @@ The tool will display an appropriate error message in these cases.
 ## Getting Help
 
 ```bash
-./ytdl.py --help
+ytdl --help
 ```
 
 For more technical details, see the source code documentation in the `core/` directory.

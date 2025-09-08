@@ -59,7 +59,7 @@ chmod +x ytdl.py
 
 Test that everything works:
 ```bash
-./ytdl.py --help
+ytdl --help
 ```
 
 ## Architecture Overview
@@ -68,10 +68,11 @@ YT-Download uses dependency injection for clean, testable code:
 
 ### Core Components
 
-- **ConfigService** (`core/config.py`): Configuration management
-- **DownloaderService** (`core/downloader.py`): yt-dlp integration
-- **CLIService** (`core/cli.py`): Command-line interface
-- **LoggerService** (`core/logger.py`): Logging functionality
+- **ConfigService** (`src/ytdl/core/config.py`): Configuration management
+- **DownloaderService** (`src/ytdl/core/downloader.py`): yt-dlp integration
+- **CLIService** (`src/ytdl/core/cli.py`): Command-line interface
+- **GUIService** (`src/ytdl/core/gui.py`): Graphical interface
+- **LoggerService** (`src/ytdl/core/logger.py`): Logging functionality
 
 ### Design Principles
 
@@ -112,7 +113,7 @@ Example test pattern:
 ```python
 import unittest
 from unittest.mock import Mock
-from core.downloader import DownloaderService
+from ytdl.core.downloader import DownloaderService
 
 class TestDownloaderService(unittest.TestCase):
     def setUp(self):
@@ -129,13 +130,13 @@ class TestDownloaderService(unittest.TestCase):
 
 ```bash
 # Run all tests
-python -m pytest
+python tools/run_tests.py
 
-# Run specific test file
-python -m pytest tests/unit/test_config.py
+# Run specific test module
+python tools/run_tests.py config
 
-# Run with coverage
-python -m pytest --cov=core
+# Run with verbose output
+python tools/run_tests.py -v
 ```
 
 ## Code Style
